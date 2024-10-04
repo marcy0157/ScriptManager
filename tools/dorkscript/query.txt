@@ -1,0 +1,4 @@
+inurl:admin
+ext:sql
+intext:"index of"
+inurl:upload ext:php | ext:asp
