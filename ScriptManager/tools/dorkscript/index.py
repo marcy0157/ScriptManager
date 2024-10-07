@@ -70,7 +70,7 @@ def main(query_file):
             })
 
         # Evita di essere bloccato con una pausa tra le richieste
-        time.sleep(4)
+        time.sleep(2)
 
     # Ordina i risultati per numero di link trovati (in ordine decrescente)
     results.sort(key=lambda x: len(x['results']), reverse=True)
