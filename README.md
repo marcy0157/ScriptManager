@@ -1,6 +1,6 @@
 # Python Tool Manager
 
-**ScriptManager** è un'applicazione multipiattaforma che consente di gestire ed eseguire script Python in un'unica interfaccia grafica. Il programma è compatibile sia con Windows che con sistemi Unix/Linux.
+**ScriptManager** è un'applicazione multipiattaforma che consente di gestire ed eseguire script Python di Cybersecurity in un'unica interfaccia grafica. Il programma è compatibile sia con Windows che con sistemi Unix/Linux.
 
 ## Funzionalità principali
 - Gestione centralizzata di più tool Python.
