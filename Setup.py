@@ -13,7 +13,7 @@ setup(
     install_requires=read_requirements(),  # Legge e installa i requisiti da requirements.txt
     entry_points={
         'console_scripts': [
-            'ScriptManager = ScriptManager.Start:main',
+            'ScriptManager = Start:main',
         ],
     },
     author="Marcello Maccagnola",

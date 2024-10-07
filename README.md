@@ -23,4 +23,4 @@ Prima di tutto, clona il repository GitHub:
 git clone https://github.com/marcy0157/ScriptManager
 cd ScriptManager
 python Setup.py install
-
+python3 Start.py
