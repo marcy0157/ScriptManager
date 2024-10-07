@@ -22,4 +22,5 @@ Prima di tutto, clona il repository GitHub:
 ```bash
 git clone https://github.com/marcy0157/ScriptManager
 cd ScriptManager
-pip install
+python Setup.py install
+
