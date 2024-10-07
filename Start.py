@@ -7,10 +7,10 @@ def main():
 
     if current_os == 'Windows':
         # Esegui il main per Windows
-        subprocess.run([sys.executable, "Main.py"])
+        subprocess.run([sys.executable, "ScriptManager/Main.py"])
     elif current_os in ['Linux', 'Darwin']:  # Darwin è per macOS
         # Esegui il main per Unix (Linux/macOS)
-        subprocess.run([sys.executable, "MainUnix.py"])
+        subprocess.run([sys.executable, "ScriptManager/MainUnix.py"])
     else:
         print(f"Errore: Sistema operativo {current_os} non supportato.")
 
