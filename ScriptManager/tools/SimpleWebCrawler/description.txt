@@ -1,0 +1,1 @@
+Esplora automaticamente le pagine di un sito web e raccoglie link interni per identificare contenuti nascosti o non indicizzati.

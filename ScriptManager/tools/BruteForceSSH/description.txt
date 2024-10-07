@@ -1,0 +1,1 @@
+Esegue attacchi brute force su un server SSH utilizzando un elenco di password per tentare di violare l'accesso.

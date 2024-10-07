@@ -30,6 +30,12 @@ class ToolManager(QMainWindow):
         # Layout per i pulsanti e il terminale a destra
         right_side_layout = QVBoxLayout()
 
+        # Casella per la descrizione del tool
+        self.description_text = QPlainTextEdit()
+        self.description_text.setReadOnly(True)  # Solo lettura
+        self.description_text.setPlaceholderText("Descrizione del tool selezionato")
+        right_side_layout.addWidget(self.description_text)
+
         # Sezione con pulsanti
         button_layout = QHBoxLayout()
         self.run_button = QPushButton("Run Tool")
@@ -92,17 +98,31 @@ class ToolManager(QMainWindow):
                     self.tool_list.append(tool)
 
     def on_tool_select(self):
-        """Abilita i pulsanti quando un tool viene selezionato."""
+        """Abilita i pulsanti quando un tool viene selezionato e mostra la descrizione."""
         selected_items = self.tool_list_widget.selectedItems()
         if selected_items:
             self.selected_tool = selected_items[0].text()
             self.run_button.setEnabled(True)
             self.stop_button.setEnabled(False)
             self.file_manager_button.setEnabled(True)
+
+            # Mostra la descrizione del tool selezionato
+            self.load_tool_description()
         else:
             self.run_button.setEnabled(False)
             self.stop_button.setEnabled(False)
             self.file_manager_button.setEnabled(False)
+            self.description_text.clear()
+
+    def load_tool_description(self):
+        """Carica e mostra la descrizione del tool selezionato."""
+        description_path = os.path.join(self.tools_dir, self.selected_tool, "description.txt")
+        if os.path.exists(description_path):
+            with open(description_path, 'r', encoding='utf-8') as f:
+                description = f.read()
+            self.description_text.setPlainText(description)
+        else:
+            self.description_text.setPlainText("Nessuna descrizione disponibile.")
 
     def run_tool(self):
         """Esegue il tool selezionato tramite cmd.exe scrivendo il comando."""
@@ -115,7 +135,7 @@ class ToolManager(QMainWindow):
                 self.process.start("cmd.exe")
                 if self.process.waitForStarted():
                     self.output_text.appendPlainText("CMD started.")
-                    python_executable = "C:/Users/MarcelloMaccagnola/.conda/envs/new1/python.exe"
+                    python_executable = "C:/Users/MarcelloMaccagnola/.conda/envs/new2/python.exe"
                     command = f"{python_executable} -u {tool_path}"
 
                     # Scrive il comando direttamente nel terminale
@@ -141,18 +161,6 @@ class ToolManager(QMainWindow):
                 self.process.write(user_input.encode())  # Invia il comando al processo
             except Exception as e:
                 self.output_text.appendPlainText(f"Errore durante l'invio del comando: {e}")
-    # def send_command(self):
-    #     """Invia il comando inserito dall'utente al processo in esecuzione."""
-    #     user_input = self.input_field.text() + '\n'
-    #     self.input_field.clear()
-    #
-    #     # Verifica se il processo è attivo e se stdin è disponibile
-    #     if self.process and self.process.state() == QProcess.Running:
-    #         try:
-    #             self.process.write(user_input.encode())
-    #             self.process.flush()  # Assicura l'invio immediato
-    #         except Exception as e:
-    #             self.output_text.appendPlainText(f"Errore durante l'invio del comando: {e}")
 
     def stop_tool(self):
         """Ferma il tool in esecuzione."""
@@ -163,13 +171,13 @@ class ToolManager(QMainWindow):
             self.stop_button.setEnabled(False)
 
     def open_file_manager(self):
-        """Apre il file manager nella cartella del tool selezionato."""
+        """Apre il file manager nella cartella del tool selezionato senza la selezione di directory."""
         if hasattr(self, 'selected_tool'):
             tool_path = os.path.join(self.tools_dir, self.selected_tool)
             if os.path.exists(tool_path):
-                QFileDialog.getExistingDirectory(self, "Open Directory", tool_path)
-            else:
-                QMessageBox.critical(self, "Errore", "La cartella del tool non esiste!")
+                # Su Windows
+                if sys.platform == 'win32':
+                    os.startfile(tool_path)
 
     def handle_stdout(self):
         """Gestisce l'output del terminale cmd.exe"""

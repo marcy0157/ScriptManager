@@ -1,0 +1,1 @@
+Verifica se un server FTP consente il login anonimo, il che potrebbe portare all'accesso non autorizzato ai file.

@@ -1,0 +1,1 @@
+Trova tutti i domini associati a un singolo indirizzo IP, utile per identificare siti che condividono lo stesso server.

@@ -1,0 +1,1 @@
+Cerca sottodomini di un dominio target utilizzando vari metodi di raccolta informazioni e brute force.

@@ -1,0 +1,1 @@
+Scansiona le applicazioni web alla ricerca di vulnerabilità XSS (Cross-Site Scripting), tentando di iniettare script malevoli.

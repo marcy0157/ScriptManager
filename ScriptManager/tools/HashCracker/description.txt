@@ -1,0 +1,1 @@
+Tenta di decifrare hash criptografici comuni utilizzando un dizionario di password.

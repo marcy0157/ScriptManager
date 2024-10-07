@@ -1,0 +1,1 @@
+Verifica se un sito web è protetto da un WAF, che potrebbe bloccare o filtrare richieste sospette.

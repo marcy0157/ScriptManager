@@ -1,0 +1,1 @@
+Simula un attacco Man-in-the-Middle su reti IPv6, sfruttando vulnerabilità nel protocollo per intercettare il traffico di rete.

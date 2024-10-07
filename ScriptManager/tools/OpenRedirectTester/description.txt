@@ -1,0 +1,1 @@
+Verifica se un'applicazione web è vulnerabile a reindirizzamenti aperti, che possono essere utilizzati per phishing o attacchi MITM.

@@ -1,0 +1,1 @@
+Esegue un attacco di "password spray", utilizzando una password comune su più account per tentare di violare credenziali.

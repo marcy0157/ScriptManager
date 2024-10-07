@@ -1,0 +1,1 @@
+Tenta di scoprire directory o pagine nascoste su un sito web eseguendo un brute force con una lista di directory comuni.

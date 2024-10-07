@@ -30,6 +30,12 @@ class ToolManagerUnix(QMainWindow):
         # Layout per i pulsanti e il terminale a destra
         right_side_layout = QVBoxLayout()
 
+        # Casella per la descrizione del tool
+        self.description_text = QPlainTextEdit()
+        self.description_text.setReadOnly(True)
+        self.description_text.setPlaceholderText("Descrizione del tool selezionato")
+        right_side_layout.addWidget(self.description_text)
+
         # Sezione con pulsanti
         button_layout = QHBoxLayout()
         self.run_button = QPushButton("Run Tool")
@@ -92,17 +98,31 @@ class ToolManagerUnix(QMainWindow):
                     self.tool_list.append(tool)
 
     def on_tool_select(self):
-        """Abilita i pulsanti quando un tool viene selezionato."""
+        """Abilita i pulsanti quando un tool viene selezionato e mostra la descrizione."""
         selected_items = self.tool_list_widget.selectedItems()
         if selected_items:
             self.selected_tool = selected_items[0].text()
             self.run_button.setEnabled(True)
             self.stop_button.setEnabled(False)
             self.file_manager_button.setEnabled(True)
+
+            # Mostra la descrizione del tool selezionato
+            self.load_tool_description()
         else:
             self.run_button.setEnabled(False)
             self.stop_button.setEnabled(False)
             self.file_manager_button.setEnabled(False)
+            self.description_text.clear()
+
+    def load_tool_description(self):
+        """Carica e mostra la descrizione del tool selezionato."""
+        description_path = os.path.join(self.tools_dir, self.selected_tool, "description.txt")
+        if os.path.exists(description_path):
+            with open(description_path, 'r', encoding='utf-8') as f:
+                description = f.read()
+            self.description_text.setPlainText(description)
+        else:
+            self.description_text.setPlainText("Nessuna descrizione disponibile.")
 
     def run_tool(self):
         """Esegue il tool selezionato usando un terminale compatibile con Unix."""

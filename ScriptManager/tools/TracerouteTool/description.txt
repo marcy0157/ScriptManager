@@ -1,0 +1,1 @@
+Identifica tutti i router intermedi tra l'host locale e un server di destinazione, utile per l'analisi della latenza e della topologia di rete.

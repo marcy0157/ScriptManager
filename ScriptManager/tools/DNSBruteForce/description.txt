@@ -1,0 +1,1 @@
+Scansiona un dominio alla ricerca di sottodomini nascosti o non documentati utilizzando un brute force su nomi di sottodomini comuni.

@@ -1,0 +1,1 @@
+Verifica se i bucket di dati in servizi cloud (es. AWS S3) sono esposti pubblicamente e accessibili senza autorizzazione.

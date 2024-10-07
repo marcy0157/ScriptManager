@@ -1,0 +1,1 @@
+Verifica se un server DNS permette il trasferimento di zona, una vulnerabilità che può esporre dati DNS sensibili.

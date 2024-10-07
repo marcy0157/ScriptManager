@@ -1,0 +1,1 @@
+Verifica le informazioni sui certificati SSL di un sito web, inclusa la data di scadenza e la catena di certificati.

@@ -1,0 +1,1 @@
+Scansiona un intervallo di porte su un host remoto per identificare quali porte sono aperte e quali servizi sono in esecuzione.

@@ -1,0 +1,1 @@
+Raccoglie indirizzi email da una pagina web per eseguire test di raccolta informazioni o per lanciare attacchi di spear-phishing.

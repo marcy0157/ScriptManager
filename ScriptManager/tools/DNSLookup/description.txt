@@ -1,0 +1,1 @@
+Esegue ricerche DNS per risolvere un dominio o ottenere informazioni sui server DNS.

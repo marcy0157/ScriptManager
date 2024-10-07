@@ -1,0 +1,1 @@
+Scansiona un sito WordPress per identificare plugin installati, verificando se sono aggiornati o vulnerabili.

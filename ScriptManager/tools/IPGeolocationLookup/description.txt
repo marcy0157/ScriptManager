@@ -1,0 +1,1 @@
+Verifica la geolocalizzazione di un indirizzo IP, ottenendo informazioni come la posizione geografica, il paese e il fornitore ISP.

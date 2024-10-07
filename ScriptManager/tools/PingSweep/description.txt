@@ -1,0 +1,1 @@
+Esegue un ping su una gamma di indirizzi IP per identificare quali host sono attivi sulla rete.
