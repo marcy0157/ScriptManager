@@ -15,7 +15,7 @@ class ToolManager(QMainWindow):
         # Imposta il logo del programma
         self.setWindowIcon(QIcon('styles/icon/logo.png'))  # Inserisci qui il percorso dell'icona
 
-        self.resize(1100, 900)  # Imposta dimensione iniziale maggiore
+        self.resize(1400, 900)  # Imposta dimensione iniziale maggiore
 
         self.tools_dir = "tools"
         self.tool_list = []
