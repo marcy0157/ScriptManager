@@ -1,0 +1,12 @@
+Query: site:www.riatrattoria.it inurl:admin
+Risultati:
+
+Query: site:www.riatrattoria.it ext:sql
+Risultati:
+
+Query: site:www.riatrattoria.it intext:"index of"
+Risultati:
+
+Query: site:www.riatrattoria.it inurl:upload ext:php | ext:asp
+Risultati:
+
