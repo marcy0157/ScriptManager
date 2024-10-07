@@ -1,17 +1,16 @@
-import subprocess
 import sys
 import os
+import subprocess
 from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidget, QPlainTextEdit, QLineEdit, QPushButton, QVBoxLayout, \
-    QHBoxLayout, QWidget, QMessageBox, QSplitter
+    QHBoxLayout, QWidget, QMessageBox, QSplitter, QComboBox
 from PyQt5.QtCore import Qt, QProcess, QFile, QTextStream
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtGui import QFont, QIcon, QColor
 
-
-class ToolManagerUnix(QMainWindow):
+class ToolManager(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Python Tool Manager")
+        self.setWindowTitle("Python Tool Manager (Unix)")
 
         # Imposta il logo del programma
         self.setWindowIcon(QIcon('styles/icon/logo.png'))  # Inserisci qui il percorso dell'icona
@@ -21,21 +20,31 @@ class ToolManagerUnix(QMainWindow):
         self.tools_dir = "tools"
         self.tool_list = []
         self.process = None
-        # Imposta la finestra
-        self.setWindowTitle("Python Tool Manager (Unix)")
-        self.resize(1400, 900)  # Imposta dimensione iniziale maggiore
-
-        self.tools_dir = "tools"
-        self.tool_list = []
-        self.process = None
+        self.categories = []
 
         splitter = QSplitter(Qt.Horizontal)
+
+        # Menu a tendina per la selezione delle categorie
+        self.category_selector = QComboBox()
+        self.category_selector.currentIndexChanged.connect(self.on_category_change)
+
+        # Pulsante di refresh per la lista dei tool
+        self.refresh_button = QPushButton("Refresh Tool List")
+        self.refresh_button.clicked.connect(self.refresh_tools)
 
         # Lista dei tool a sinistra
         self.tool_list_widget = QListWidget()
         font = QFont("Segoe UI", 12)
         self.tool_list_widget.setFont(font)
-        splitter.addWidget(self.tool_list_widget)
+
+        # Layout a sinistra con il menu a tendina e la lista dei tool
+        left_side_layout = QVBoxLayout()
+        left_side_layout.addWidget(self.category_selector)
+        left_side_layout.addWidget(self.tool_list_widget)
+        left_side_layout.addWidget(self.refresh_button)
+        left_side_widget = QWidget()
+        left_side_widget.setLayout(left_side_layout)
+        splitter.addWidget(left_side_widget)
 
         # Layout per i pulsanti e il terminale a destra
         right_side_layout = QVBoxLayout()
@@ -47,7 +56,7 @@ class ToolManagerUnix(QMainWindow):
         self.description_text.setFixedHeight(120)  # Altezza della descrizione ridotta
 
         # Imposta un font personalizzato con dimensione maggiore
-        font = QFont("Segoe UI", 12)  # Cambia la dimensione secondo le tue esigenze
+        font = QFont("Segoe UI", 12)
         self.description_text.setFont(font)
 
         right_side_layout.addWidget(self.description_text)
@@ -88,6 +97,7 @@ class ToolManagerUnix(QMainWindow):
         self.input_field = QLineEdit()
         self.input_field.setPlaceholderText("Inserisci comando...")
         self.input_field.returnPressed.connect(self.send_command)
+        self.input_field.setFont(QFont("Consolas", 12))
         right_side_layout.addWidget(self.input_field)
 
         # Crea un widget per i pulsanti e il terminale
@@ -102,7 +112,7 @@ class ToolManagerUnix(QMainWindow):
         self.process.readyReadStandardOutput.connect(self.handle_stdout)
         self.process.readyReadStandardError.connect(self.handle_stderr)
 
-        self.load_tools()
+        self.load_categories_and_tools()
         self.tool_list_widget.itemSelectionChanged.connect(self.on_tool_select)
 
         # Carica lo stile da un file esterno
@@ -116,10 +126,32 @@ class ToolManagerUnix(QMainWindow):
             self.setStyleSheet(stream.readAll())
         file.close()
 
-    def load_tools(self):
+    def load_categories_and_tools(self):
+        """Carica le categorie e i tool dalla struttura delle directory."""
         if os.path.exists(self.tools_dir):
-            for tool in os.listdir(self.tools_dir):
-                tool_path = os.path.join(self.tools_dir, tool)
+            self.categories = [d for d in os.listdir(self.tools_dir) if os.path.isdir(os.path.join(self.tools_dir, d))]
+            self.category_selector.addItems(self.categories)
+            if self.categories:
+                self.load_tools(self.categories[0])  # Carica i tool della prima categoria per impostazione predefinita
+
+    def on_category_change(self):
+        """Gestisce il cambiamento di categoria e carica i tool per la categoria selezionata."""
+        selected_category = self.category_selector.currentText()
+        self.load_tools(selected_category)
+
+    def refresh_tools(self):
+        """Aggiorna la lista dei tool ricaricando la directory"""
+        self.category_selector.clear()
+        self.load_categories_and_tools()
+
+    def load_tools(self, category):
+        """Carica i tool dalla directory specificata."""
+        self.tool_list_widget.clear()
+        self.tool_list = []
+        category_path = os.path.join(self.tools_dir, category)
+        if os.path.exists(category_path):
+            for tool in os.listdir(category_path):
+                tool_path = os.path.join(category_path, tool)
                 if os.path.isdir(tool_path):
                     self.tool_list_widget.addItem(tool)
                     self.tool_list.append(tool)
@@ -133,15 +165,14 @@ class ToolManagerUnix(QMainWindow):
             self.file_manager_button.setEnabled(True)  # Attiva il pulsante correttamente
             self.load_tool_description()
 
-            # Debug per verificare se il pulsante è abilitato
-            print("File Manager Button is enabled:", self.file_manager_button.isEnabled())
         else:
             self.run_button.setEnabled(False)
             self.stop_button.setEnabled(False)
             self.file_manager_button.setEnabled(False)
 
     def load_tool_description(self):
-        description_path = os.path.join(self.tools_dir, self.selected_tool, "description.txt")
+        selected_category = self.category_selector.currentText()
+        description_path = os.path.join(self.tools_dir, selected_category, self.selected_tool, "description.txt")
         if os.path.exists(description_path):
             with open(description_path, 'r', encoding='utf-8') as f:
                 description = f.read()
@@ -150,21 +181,21 @@ class ToolManagerUnix(QMainWindow):
             self.description_text.setPlainText("Nessuna descrizione disponibile.")
 
     def run_tool(self):
-        if hasattr(self, 'selected_tool'):
-            tool_path = os.path.join(self.tools_dir, self.selected_tool, "index.py")
-            if os.path.exists(tool_path):
-                self.output_text.appendPlainText(f"Esecuzione del tool: {self.selected_tool}")
+        selected_category = self.category_selector.currentText()
+        tool_path = os.path.join(self.tools_dir, selected_category, self.selected_tool, "index.py")
+        if os.path.exists(tool_path):
+            self.output_text.appendPlainText(f"Esecuzione del tool: {self.selected_tool}")
 
-                # Avvia il processo su Unix
-                python_executable = "python3"
-                command = f"{python_executable} -u {tool_path}"
-                self.process.start(command)
+            # Utilizza sys.executable per il percorso dell'interprete Python
+            python_executable = sys.executable
+            command = f"{python_executable} -u {tool_path}"
 
-                if self.process.waitForStarted():
-                    self.run_button.setEnabled(False)
-                    self.stop_button.setEnabled(True)
-                else:
-                    self.output_text.appendPlainText(f"Errore nell'avvio del tool: {self.process.errorString()}")
+            self.process.start(command)
+            if self.process.waitForStarted():
+                self.run_button.setEnabled(False)
+                self.stop_button.setEnabled(True)
+            else:
+                self.show_error(f"Errore nell'avvio del tool: {self.process.errorString()}")
 
     def send_command(self):
         user_input = self.input_field.text() + '\n'
@@ -173,7 +204,7 @@ class ToolManagerUnix(QMainWindow):
             try:
                 self.process.write(user_input.encode())
             except Exception as e:
-                self.output_text.appendPlainText(f"Errore durante l'invio del comando: {e}")
+                self.show_error(f"Errore durante l'invio del comando: {e}")
 
     def stop_tool(self):
         if self.process.state() == QProcess.Running:
@@ -183,23 +214,28 @@ class ToolManagerUnix(QMainWindow):
             self.stop_button.setEnabled(False)
 
     def handle_stdout(self):
+        """Gestisce l'output normale con colore predefinito"""
         data = self.process.readAllStandardOutput().data().decode()
-        self.output_text.appendPlainText(data)
+        self.output_text.appendHtml(f'<span style="color: green;">{data}</span>')
 
     def handle_stderr(self):
+        """Gestisce l'output di errore con colore rosso"""
         data = self.process.readAllStandardError().data().decode()
-        self.output_text.appendPlainText(f"Error: {data}")
+        self.output_text.appendHtml(f'<span style="color: red;">{data}</span>')
+
+    def show_error(self, message):
+        """Mostra una finestra modale con il messaggio di errore"""
+        QMessageBox.critical(self, "Errore", message)
 
     def open_file_manager(self):
-        print("Open File Manager Clicked")  # Aggiungi questa riga di debug per confermare l'azione
-        if hasattr(self, 'selected_tool'):
-            tool_path = os.path.join(self.tools_dir, self.selected_tool)
-            if os.path.exists(tool_path):
-                subprocess.Popen(['xdg-open', tool_path])  # Usa xdg-open per Linux
+        selected_category = self.category_selector.currentText()
+        tool_path = os.path.join(self.tools_dir, selected_category, self.selected_tool)
+        if os.path.exists(tool_path):
+            subprocess.Popen(['xdg-open', tool_path])  # Usa xdg-open su Unix/Linux per aprire il file manager
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = ToolManagerUnix()
+    window = ToolManager()
     window.show()
     sys.exit(app.exec())

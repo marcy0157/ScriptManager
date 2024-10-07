@@ -3,8 +3,7 @@ import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidget, QPlainTextEdit, QLineEdit, QPushButton, QVBoxLayout, \
     QHBoxLayout, QWidget, QMessageBox, QSplitter, QComboBox
 from PyQt5.QtCore import Qt, QProcess, QFile, QTextStream
-from PyQt5.QtGui import QFont, QIcon
-
+from PyQt5.QtGui import QFont, QIcon, QColor
 
 class ToolManager(QMainWindow):
     def __init__(self):
@@ -28,6 +27,10 @@ class ToolManager(QMainWindow):
         self.category_selector = QComboBox()
         self.category_selector.currentIndexChanged.connect(self.on_category_change)
 
+        # Pulsante di refresh per la lista dei tool
+        self.refresh_button = QPushButton("Refresh Tool List")
+        self.refresh_button.clicked.connect(self.refresh_tools)
+
         # Lista dei tool a sinistra
         self.tool_list_widget = QListWidget()
         font = QFont("Segoe UI", 12)
@@ -37,6 +40,7 @@ class ToolManager(QMainWindow):
         left_side_layout = QVBoxLayout()
         left_side_layout.addWidget(self.category_selector)
         left_side_layout.addWidget(self.tool_list_widget)
+        left_side_layout.addWidget(self.refresh_button)
         left_side_widget = QWidget()
         left_side_widget.setLayout(left_side_layout)
         splitter.addWidget(left_side_widget)
@@ -134,6 +138,11 @@ class ToolManager(QMainWindow):
         selected_category = self.category_selector.currentText()
         self.load_tools(selected_category)
 
+    def refresh_tools(self):
+        """Aggiorna la lista dei tool ricaricando la directory"""
+        self.category_selector.clear()
+        self.load_categories_and_tools()
+
     def load_tools(self, category):
         """Carica i tool dalla directory specificata."""
         self.tool_list_widget.clear()
@@ -175,15 +184,18 @@ class ToolManager(QMainWindow):
         tool_path = os.path.join(self.tools_dir, selected_category, self.selected_tool, "index.py")
         if os.path.exists(tool_path):
             self.output_text.appendPlainText(f"Esecuzione del tool: {self.selected_tool}")
+
+            # Utilizza sys.executable per il percorso dell'interprete Python
+            python_executable = sys.executable
+            command = f"{python_executable} -u {tool_path}"
+
             self.process.start("cmd.exe")
             if self.process.waitForStarted():
-                python_executable = "python.exe"  # Cambia secondo il tuo ambiente
-                command = f"{python_executable} -u {tool_path}"
                 self.process.write(command.encode() + b'\n')
                 self.run_button.setEnabled(False)
                 self.stop_button.setEnabled(True)
             else:
-                self.output_text.appendPlainText(f"Errore nell'avvio del tool: {self.process.errorString()}")
+                self.show_error(f"Errore nell'avvio del tool: {self.process.errorString()}")
 
     def send_command(self):
         user_input = self.input_field.text() + '\n'
@@ -192,7 +204,7 @@ class ToolManager(QMainWindow):
             try:
                 self.process.write(user_input.encode())
             except Exception as e:
-                self.output_text.appendPlainText(f"Errore durante l'invio del comando: {e}")
+                self.show_error(f"Errore durante l'invio del comando: {e}")
 
     def stop_tool(self):
         if self.process.state() == QProcess.Running:
@@ -202,12 +214,18 @@ class ToolManager(QMainWindow):
             self.stop_button.setEnabled(False)
 
     def handle_stdout(self):
+        """Gestisce l'output normale con colore predefinito"""
         data = self.process.readAllStandardOutput().data().decode()
-        self.output_text.appendPlainText(data)
+        self.output_text.appendHtml(f'<span style="color: green;">{data}</span>')
 
     def handle_stderr(self):
+        """Gestisce l'output di errore con colore rosso"""
         data = self.process.readAllStandardError().data().decode()
-        self.output_text.appendPlainText(f"Error: {data}")
+        self.output_text.appendHtml(f'<span style="color: red;">{data}</span>')
+
+    def show_error(self, message):
+        """Mostra una finestra modale con il messaggio di errore"""
+        QMessageBox.critical(self, "Errore", message)
 
     def open_file_manager(self):
         selected_category = self.category_selector.currentText()
