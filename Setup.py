@@ -1,13 +1,16 @@
 from setuptools import setup, find_packages
 
+# Funzione per leggere i requisiti dal file requirements.txt
+def read_requirements():
+    with open("requirements.txt") as f:
+        return f.read().splitlines()
+
 setup(
     name="ScriptManager",
     version="1.0",
-    packages=find_packages(),
-    include_package_data=True,
-    install_requires=[
-        "PyQt5",  # Dipendenza necessaria per l'interfaccia grafica
-    ],
+    packages=find_packages(),  # Cerca automaticamente i pacchetti nel progetto
+    include_package_data=True,  # Include anche file non Python specificati in MANIFEST.in
+    install_requires=read_requirements(),  # Legge e installa i requisiti da requirements.txt
     entry_points={
         'console_scripts': [
             'ScriptManager = ScriptManager.Start:main',

@@ -1,7 +1,8 @@
+import os
+import time
+
 import requests
 from bs4 import BeautifulSoup
-import time
-import os
 
 
 def google_search(query):
