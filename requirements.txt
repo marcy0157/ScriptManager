@@ -1,7 +1,7 @@
-setuptools~=70.0.0
+setuptools
 requests~=2.32.3
 beautifulsoup4~=4.12.3
 paramiko~=2.8.1
-pyqt5~=5.15.11
+pyqt5
 scapy~=2.4.3
-dnspython~=2.7.0
+dnspython
