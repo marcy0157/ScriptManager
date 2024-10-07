@@ -90,5 +90,5 @@ def main(query_file):
 
 
 if __name__ == "__main__":
-    query_file = "query.txt"
+    query_file = os.path.join(os.path.dirname(__file__), "query.txt")
     main(query_file)
