@@ -14,7 +14,10 @@
 - **Python 3.6** o superiore.
 - **PyQt5** per l'interfaccia grafica.
 
-paramiko 2.8.1
+aggiornato:
+paramiko 2.8.1 per vulnerabilities
+
+
 ## Installazione
 
 ### Clonare il repository
