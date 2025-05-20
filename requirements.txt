@@ -1,4 +1,4 @@
-setuptools~=75.1.0
+setuptools~=78.1.1
 requests~=2.32.3
 beautifulsoup4~=4.12.3
 paramiko~=3.4.0
